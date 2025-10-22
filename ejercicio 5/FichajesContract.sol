@@ -46,6 +46,12 @@ contract FichajeFutbol {
         string memory _clubDestino,
         uint256 _valorTransferencia
     ) public soloOwner {
+        require(_jugadorEdad >= 13 && _jugadorEdad <= 50, "Edad invalida, introduzca un valor entre 13 y 50");
+        require(_valorTransferencia > 0, "El valor debe ser positivo");
+        require(bytes(_jugadorNombre).length > 0, "Nombre requerido");
+        require(bytes(_clubOrigen).length > 0, "Club origen requerido");
+        require(bytes(_clubDestino).length > 0, "Club destino requerido");
+
         totalFichajes++;
 
         fichajes[totalFichajes] = Fichaje(
