@@ -1,0 +1,255 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Sistema de Fichajes de Fútbol Basado en Blockchain}
+\author{Álvaro Caínzos Urtiaga & Brais Gómez Espiñeira}
+\date{\today}
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{abstract}
+		Este documento describe el diseño e implementación de un sistema de fichajes de fútbol basado en blockchain para solucionar problemas de transparencia y trazabilidad en las transacciones financieras del mundo del fútbol, particularmente a nivel semiprofesional.
+	\end{abstract}
+	
+	\section{Introducción y Problemática}
+	
+	\subsection{Contexto del Problema}
+	La base de nuestro escenario reside en la cantidad de transacciones en B y fraudulentas llevadas a cabo en el mundo del fútbol, sobre todo a nivel semiprofesional. En las distintas federaciones de nuestro país es habitual la opacidad y la falta de trazabilidad en las transacciones financieras que da lugar a problemas como:
+	
+	\begin{itemize}
+		\item \textbf{Pagos no declarados (``en B'')} a jugadores, agentes o directivos
+		\item \textbf{Evasión de impuestos}
+		\item \textbf{Incumplimiento} de las reglas de ``Fair Play Financiero''
+		\item \textbf{Disputas} entre clubes, jugadores y agentes por pagos no realizados
+	\end{itemize}
+	
+	\subsection{Solución Propuesta}
+	Estos problemas podrían ser solucionados con la implementación de una \textbf{blockchain pública basada en Ethereum}. Esta solución garantiza:
+	
+	\begin{itemize}
+		\item \textbf{Transparencia inmutable}
+		\item \textbf{Trazabilidad completa}
+		\item \textbf{Automatización y confianza}
+		\item \textbf{Reducción de intermediarios}
+	\end{itemize}
+	
+	\section{Caso de Uso: Sistema de Fichajes}
+	
+	\subsection{Descripción General}
+	El sistema permite a la Federación de Fútbol registrar fichajes de jugadores entre clubes y posteriormente aprobarlos, estableciendo un \textbf{registro inmutable y transparente} de las operaciones de transferencia.
+	
+	\subsection{Actores Principales}
+	
+	\subsubsection{Federación (Owner/Rol Administrativo)}
+	\begin{itemize}
+		\item Responsable de registrar los fichajes en el sistema
+		\item Único con permisos para aprobar los fichajes
+		\item Gestor principal del contrato inteligente
+	\end{itemize}
+	
+	\subsubsection{Público/Consultores (Cualquier usuario de la blockchain)}
+	\begin{itemize}
+		\item Pueden consultar información de fichajes registrados
+		\item Visualizan el estado de aprobación de los fichajes
+	\end{itemize}
+	
+	\subsection{Actores Futuros Planificados}
+	
+	\subsubsection{Club (Organización Deportiva)}
+	\begin{itemize}
+		\item \textbf{Wallet asociada}: Dirección blockchain única para cada club
+		\item \textbf{Rol en transacciones}: Participante activo en operaciones de transferencia
+		\item \textbf{Funcionalidades planificadas}:
+		\begin{itemize}
+			\item Aprobación digital de fichajes como club origen/destino
+			\item Depósito de fondos mediante smart contracts
+			\item Recepción de pagos de transferencias
+			\item Gestión de contratos de jugadores
+		\end{itemize}
+	\end{itemize}
+	
+	\subsubsection{Jugador (Deportista)}
+	\begin{itemize}
+		\item \textbf{Wallet personal}: Dirección blockchain para identificación digital
+		\item \textbf{Participación activa}: Consentimiento en operaciones de transferencia
+		\item \textbf{Beneficios futuros}:
+		\begin{itemize}
+			\item Recepción directa de bonos de fichaje
+			\item Verificación de contratos mediante IPFS
+			\item Historial profesional inmutable
+		\end{itemize}
+	\end{itemize}
+	
+	\subsubsection{Agente (Representante)}
+	\begin{itemize}
+		\item \textbf{Wallet profesional}: Identificación en la blockchain
+		\item \textbf{Rol intermediario}: Gestión de negociaciones entre partes
+		\item \textbf{Funcionalidades planificadas}:
+		\begin{itemize}
+			\item Recepción automatizada de comisiones
+			\item Verificación de acuerdos comerciales
+			\item Gestión de cartera de jugadores
+		\end{itemize}
+	\end{itemize}
+	
+	\section{Flujo Principal del Caso de Uso}
+	
+	\subsection{Registro de Fichaje}
+	
+	\begin{tcolorbox}[title=Registro de Fichaje,colback=blue!5!white]
+		\textbf{Actor:} Federación
+		
+		\textbf{Precondición:}
+		\begin{itemize}
+			\item El caller debe ser el owner del contrato (Federación)
+			\item Debe disponer de toda la información requerida del fichaje
+		\end{itemize}
+		
+		\textbf{Flujo:}
+		\begin{enumerate}
+			\item La Federación ejecuta la función \texttt{registrarFichaje()}
+			\item Proporciona los parámetros requeridos:
+			\begin{itemize}
+				\item \texttt{\_jugadorNombre} (string): Nombre completo del jugador
+				\item \texttt{\_jugadorEdad} (uint): Edad del jugador
+				\item \texttt{\_clubOrigen} (string): Club actual del jugador
+				\item \texttt{\_clubDestino} (string): Club al que se transfiere
+				\item \texttt{\_valorTransferencia} (uint256): Monto de la transferencia
+			\end{itemize}
+			\item El sistema genera automáticamente:
+			\begin{itemize}
+				\item ID único incremental del fichaje
+				\item Fecha y hora del registro (timestamp de bloque)
+				\item Estado inicial ``no aprobado'' (\texttt{aprobado = false})
+			\end{itemize}
+			\item El sistema emite el evento \texttt{FichajeRegistrado}
+			\item El fichaje queda almacenado en el mapping \texttt{fichajes}
+		\end{enumerate}
+		
+		\textbf{Postcondición:}
+		\begin{itemize}
+			\item El contador \texttt{totalFichajes} se incrementa en 1
+			\item El nuevo fichaje está disponible para consulta pública
+			\item El estado inicial es ``pendiente de aprobación''
+		\end{itemize}
+	\end{tcolorbox}
+	
+	\subsection{Aprobación de Fichaje}
+	
+	\begin{tcolorbox}[title=Aprobación de Fichaje,colback=green!5!white]
+		\textbf{Actor:} Federación
+		
+		\textbf{Precondición:}
+		\begin{itemize}
+			\item El fichaje debe existir (ID válido)
+			\item El caller debe ser el owner del contrato
+			\item El fichaje debe estar en estado ``no aprobado''
+		\end{itemize}
+		
+		\textbf{Flujo:}
+		\begin{enumerate}
+			\item La Federación ejecuta \texttt{aprobarFichaje(\_id)}
+			\item Especifica el ID del fichaje a aprobar
+			\item El sistema verifica que el fichaje existe
+			\item Cambia el estado \texttt{aprobado} a \texttt{true}
+			\item Emite el evento \texttt{FichajeAprobado}
+		\end{enumerate}
+		
+		\textbf{Postcondición:}
+		\begin{itemize}
+			\item El fichaje queda marcado como oficialmente aprobado
+			\item El cambio es permanente e inmutable
+			\item El evento permite el tracking externo de la aprobación
+		\end{itemize}
+	\end{tcolorbox}
+	
+	\subsection{Consulta de Fichaje}
+	
+	\begin{tcolorbox}[title=Consulta de Fichaje,colback=yellow!5!white]
+		\textbf{Actor:} Cualquier usuario (público)
+		
+		\textbf{Precondición:}
+		\begin{itemize}
+			\item El fichaje debe existir (ID válido)
+		\end{itemize}
+		
+		\textbf{Flujo:}
+		\begin{enumerate}
+			\item El usuario ejecuta \texttt{obtenerFichaje(\_id)}
+			\item Especifica el ID del fichaje a consultar
+			\item El sistema devuelve todos los datos del fichaje:
+			\begin{itemize}
+				\item Información del jugador (nombre, edad)
+				\item Clubes involucrados (origen y destino)
+				\item Detalles financieros (valor de transferencia)
+				\item Fecha del fichaje
+				\item Estado de aprobación
+			\end{itemize}
+		\end{enumerate}
+		
+		\textbf{Postcondición:}
+		\begin{itemize}
+			\item El usuario obtiene información completa del fichaje
+			\item Los datos son verificables en la blockchain
+		\end{itemize}
+	\end{tcolorbox}
+	
+	\section{Beneficios del Sistema}
+	
+	\subsection{Transparencia}
+	\begin{itemize}
+		\item \textbf{Registros inmutables}: Una vez registrado, el fichaje no puede ser alterado
+		\item \textbf{Acceso público}: Cualquier persona puede verificar la información
+		\item \textbf{Auditoría completa}: Trazabilidad de todas las operaciones
+	\end{itemize}
+	
+	\subsection{Seguimiento de Estados}
+	\begin{itemize}
+		\item \textbf{Estados claros}: Pendiente → Aprobado
+		\item \textbf{Eventos emitidos}: Notificaciones públicas de cambios de estado
+		\item \textbf{Historial completo}: Registro permanente de todas las acciones
+	\end{itemize}
+	
+	\subsection{Prevención de Fraudes}
+	\begin{itemize}
+		\item \textbf{Eliminación de pagos en B}: Todas las transacciones son registradas
+		\item \textbf{Control federativo}: Aprobación centralizada de operaciones
+		\item \textbf{Compliance automático}: Cumplimiento de regulaciones financieras
+	\end{itemize}
+	
+\section{Análisis de Vulnerabilidades Identificadas}
+
+\subsection{Centralización del Control}
+El contrato presenta una dependencia exclusiva del propietario (owner) para todas las operaciones críticas, creando un único punto de fallo. Esta centralización representa un riesgo alto pues si la clave privada del owner se compromete, un atacante tomaría control total del sistema. El diseño actual contradice los principios de descentralización blockchain y limita la escalabilidad de la aplicación.
+
+\subsection{Validaciones Insuficientes}
+Se detectó la falta de validaciones específicas del dominio futbolístico que prevengan escenarios ilógicos o inconsistentes. Aunque existen validaciones básicas, no se verifican condiciones como la imposibilidad de que un club sea origen y destino simultáneamente. Estas limitaciones afectan la integridad de los datos y podrían permitir registros duplicados o erróneos.
+
+\section{Mejoras Futuras Recomendadas}
+
+\subsection{Sistema de Estados Completo}
+La implementación actual con un simple booleano de aprobación resulta insuficiente para modelar el flujo real de una transferencia futbolística. Se recomienda desarrollar un sistema de estados múltiples que refleje todas las etapas del proceso: negociación, aprobaciones médicas, autorizaciones de clubes, firma del jugador y finalización. Esto proporcionaría mayor trazabilidad y control granular.
+
+\subsection{Gestión de Pagos y Finanzas}
+Con la futura incorporación de múltiples agentes en el ecosistema, el contrato deberá evolucionar hacia un sistema integral de gestión financiera. Esto incluiría el manejo de flujos de pagos, distribución automática de fondos entre partes y verificación de cumplimiento de obligaciones financieras, asegurando transparencia en todas las transacciones económicas.
+
+\subsection{Sistema de Reputación y Historial}
+La creación de perfiles acumulativos para jugadores y clubes representaría un valor añadido significativo. Este sistema permitiría rastrear historiales completos de transferencias, progresión de valores y métricas de comportamiento, proporcionando contexto invaluable para evaluar nuevos fichajes y establecer patrones de confianza.
+
+\subsection{Sistema de Comisiones y Economía}
+Paralelamente a la gestión de pagos, se recomienda implementar un modelo económico sofisticado para el cálculo y distribución automatizada de comisiones. Este sistema manejaría porcentajes para agentes, federaciones e impuestos, adaptándose a diferentes normativas internacionales y asegurando cumplimiento regulatorio en todas las operaciones.
+	
+\end{document}
